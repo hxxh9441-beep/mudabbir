@@ -90,7 +90,8 @@ function buildPages(c: Curriculum) {
 export async function loadCurriculum(): Promise<Curriculum> {
   if (cache) return cache;
   if (inflight) return inflight;
-  inflight = fetch('/data/quran-curriculum.json')
+  // BASE_URL يضبطه Vite حسب base: '/' محلياً، '/quran-circle/' على GitHub Pages.
+  inflight = fetch(`${import.meta.env.BASE_URL}data/quran-curriculum.json`)
     .then((r) => {
       if (!r.ok) throw new Error('فشل تحميل فهرس المنهج');
       return r.json() as Promise<Curriculum>;
