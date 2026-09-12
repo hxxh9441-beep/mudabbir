@@ -8,6 +8,10 @@
   <img src="public/icons/icon-512.png" alt="مُدَبِّر" width="128" />
 </p>
 
+<p align="center">
+  <a href="https://hxxh9441-beep.github.io/quran-circle/"><b>🔗 المعاينة الحيّة — hxxh9441-beep.github.io/quran-circle</b></a>
+</p>
+
 ---
 
 ## المزايا
@@ -45,11 +49,14 @@ npm run serve          # معاينة على المنفذ 3000 (نفس أصل ب
 npm run lint           # ESLint
 ```
 
-للتجربة على الجوال عبر الشبكة المحليّة: `npm run dev -- --host 0.0.0.0`
-ثم افتح `http://<عنوان-جهازك>:3000`.
+### 🌐 المعاينة الحيّة
+
+**https://hxxh9441-beep.github.io/quran-circle/**
+
+يُنشر تلقائيّاً على GitHub Pages عند كلّ دفعةٍ إلى `main` (عبر GitHub Actions).
 
 > **ملاحظة PWA**: تسجيل الـService Worker (والعمل بلا شبكة) لا يعمل إلا على
-> **`https` أو `localhost`** — وهو شرطُ المتصفّحات لا التطبيق.
+> **`https` أو `localhost`** — وهو شرطُ المتصفّحات لا التطبيق. (رابط Pages أعلاه `https` فيعمل بلا شبكةٍ عادةً.)
 
 ## بنية المشروع
 
