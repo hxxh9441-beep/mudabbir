@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  <a href="https://hxxh9441-beep.github.io/quran-circle/"><b>🔗 المعاينة الحيّة — hxxh9441-beep.github.io/quran-circle</b></a>
+  <a href="https://hxxh9441-beep.github.io/mudabbir/"><b>🔗 المعاينة الحيّة — hxxh9441-beep.github.io/mudabbir</b></a>
 </p>
 
 ---
@@ -51,7 +51,7 @@ npm run lint           # ESLint
 
 ### 🌐 المعاينة الحيّة
 
-**https://hxxh9441-beep.github.io/quran-circle/**
+**https://hxxh9441-beep.github.io/mudabbir/**
 
 يُنشر تلقائيّاً على GitHub Pages عند كلّ دفعةٍ إلى `main` (عبر GitHub Actions).
 
