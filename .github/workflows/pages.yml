@@ -2,7 +2,8 @@ name: Deploy to GitHub Pages
 
 # نشرٍ حيٍّ لـ«مُدَبِّر» على GitHub Pages عند كل دفعة إلى main.
 # التطبيق Vite ⇒ يُبنى أولاً، ثم يُنشر مجلّد dist فقط (لا السورس).
-# ملاحظة: vite.config.ts يضبط base='/quran-circle/' تلقائياً داخل Actions.
+# ملاحظة: vite.config.ts يشتقّ base من اسم المستودع (GITHUB_REPOSITORY) داخل Actions،
+# فيبقى صحيحاً تلقائياً مهما تغيّر اسم المستودع.
 
 on:
   push:

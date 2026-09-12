@@ -87,7 +87,7 @@ function stripBasmalah(t: string): string {
 export async function loadMushaf(): Promise<MushafData> {
   if (cache) return cache;
   if (inflight) return inflight;
-  // BASE_URL يضبطه Vite حسب base: '/' محلياً، '/quran-circle/' على GitHub Pages.
+  // BASE_URL يضبطه Vite حسب base: '/' محلياً، و«/<اسم-المستودع>/» على GitHub Pages.
   inflight = fetch(`${import.meta.env.BASE_URL}data/mushaf-pages.json`)
     .then((r) => {
       if (!r.ok) throw new Error('فشل تحميل بيانات المصحف');

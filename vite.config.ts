@@ -4,9 +4,11 @@ import { VitePWA } from 'vite-plugin-pwa';
 import { resolve } from 'path';
 
 // https://vitejs.dev/config/
-// GitHub Pages ينشر المستودع تحت مسارٍ فرعيّ: /quran-circle/
-// نُثبّته عند البناء داخل Actions فقط، فيبقى التطوير والمعاينة المحلية على الجذر '/'.
-const base = process.env.GITHUB_ACTIONS ? '/quran-circle/' : '/';
+// GitHub Pages ينشر المستودع تحت مسارٍ فرعيّ يحمل اسمه (مثل /mudabbir/).
+// نشتقّه تلقائياً من GITHUB_REPOSITORY (owner/repo) ⇒ يبقى صحيحاً مهما غيّرنا اسم المستودع.
+// محليّاً نبقى على الجذر '/' فيعمل التطوير والمعاينة بلا تغيير.
+const repo = process.env.GITHUB_REPOSITORY?.split('/')[1];
+const base = process.env.GITHUB_ACTIONS && repo ? `/${repo}/` : '/';
 
 export default defineConfig({
   base,
