@@ -1,0 +1,439 @@
+@import "tailwindcss";
+
+/* Tailwind v4 does not read tailwind.config.js by default — bridge it explicitly. */
+@config "../tailwind.config.js";
+
+/* ============================================================
+   مُدَبِّر — Warm Apple Glassmorphism (Brown/Caramel palette)
+   Light:  warm sand/cream bg, frosted cream cards, warm brown text
+   Dark :  very dark mocha (OLED-ish) bg, frosted mocha cards, warm light text
+   ============================================================ */
+
+:root {
+  color-scheme: light;
+}
+html.dark {
+  color-scheme: dark;
+}
+
+/* ============================================================
+   خطّ النظام: **ثمانية — عائلة العرض (Thmanyah Display)** كما في هويّة ثمانية،
+   و«Thmanyah Sans» بديلٌ لها عند غياب أيّ محرف.
+   وُضع أولاً في `body` فيرثه كل شيء، وتليه بدائل النظام.
+   ⚠️ خطّ المصحف وحده (`Scheherazade New` عبر .font-mushaf / .font-quran)
+   لا يُمَسّ بهذا التغيير إطلاقاً.
+   ============================================================ */
+@font-face {
+  font-family: "Thmanyah Display";
+  src: url("/fonts/thmanyah/ThmanyahDisplay-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Thmanyah Display";
+  src: url("/fonts/thmanyah/ThmanyahDisplay-Bold.woff2") format("woff2");
+  font-weight: 600 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Thmanyah Display";
+  src: url("/fonts/thmanyah/ThmanyahDisplay-Black.woff2") format("woff2");
+  font-weight: 800 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Thmanyah Sans";
+  src: url("/fonts/thmanyah/ThmanyahSans-Light.woff2") format("woff2");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Thmanyah Sans";
+  src: url("/fonts/thmanyah/ThmanyahSans-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Thmanyah Sans";
+  src: url("/fonts/thmanyah/ThmanyahSans-Medium.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Thmanyah Sans";
+  src: url("/fonts/thmanyah/ThmanyahSans-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Thmanyah Sans";
+  src: url("/fonts/thmanyah/ThmanyahSans-Black.woff2") format("woff2");
+  font-weight: 800 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+body {
+  margin: 0;
+  font-family: "Thmanyah Display", "Thmanyah Sans", "Cairo", -apple-system,
+    BlinkMacSystemFont, "SF Pro Text", "Segoe UI", "Noto Sans", "Noto Naskh Arabic",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  letter-spacing: 0;
+  text-rendering: optimizeLegibility;
+}
+
+/* ---- App backgrounds (warm) ----
+   Light: warm Egyptian-sand / cream  (#F5EFEB)
+   Dark : deep warm mocha, close to black  (#120D0A)              */
+@utility app-bg {
+  @apply bg-[#F5EFEB] text-[#2D1F17];
+}
+html.dark .app-bg {
+  background-color: #120d0a;
+  color: #f5ebe1;
+}
+
+/* ---- Frosted warm card (base) ----
+   Light: frosted cream glass  bg-amber-50/80, border-amber-900/10, blur-xl
+   Dark : frosted mocha glass   bg-[#241A14]/70, border-amber-500/15         */
+@utility glass {
+  @apply rounded-2xl border border-amber-900/10 bg-amber-50/80 shadow-sm backdrop-blur-xl;
+}
+html.dark .glass {
+  border-color: rgb(255 255 255 / 0.1);
+  background-color: rgb(36 26 20 / 0.7);
+  box-shadow: 0 8px 32px rgb(30 20 12 / 0.45);
+}
+
+/* Elevated frosted warm card (modals / sheets) */
+@utility glass-strong {
+  @apply rounded-3xl border border-amber-900/10 bg-amber-50/90 shadow-2xl backdrop-blur-2xl;
+}
+html.dark .glass-strong {
+  border-color: rgb(255 255 255 / 0.1);
+  background-color: rgb(36 26 20 / 0.75);
+  box-shadow: 0 20px 60px rgb(25 16 10 / 0.65);
+}
+
+/* Subtle tap feedback */
+@utility press {
+  @apply transition-transform duration-150 active:scale-[0.96];
+}
+
+/* iOS-style bottom sheet entrance */
+@keyframes slide-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+.animate-slide-up {
+  animation: slide-up 0.32s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+/* Fade-in for backdrops */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.animate-fade-in {
+  animation: fade-in 0.2s ease-out;
+}
+
+/* Warm caramel accent (buttons / highlights) */
+@utility btn-accent {
+  @apply bg-[#B8860B] text-white;
+}
+html.dark .btn-accent {
+  background-image: linear-gradient(135deg, #c9971f, #a8751a);
+}
+
+/* ---- شارة الدرجة/الحالة على بطاقة الطالب ----
+   اللون يُمرَّر من JS في المتغيّر --score (تدريج scoreColor نفسه)، وهذه القاعدة
+   تبني منه: تعبئةً خفيفة + إطاراً + نصّاً متبايناً في كل ثيمٍ على حدة.
+   خفيفةٌ في النهاري (تعبئة ١٣٪ ونصٌّ داكن)، مظللةٌ في الليلي (تعبئة ٢٠٪ ونصٌّ فاتح). */
+@utility chip-score {
+  background-color: color-mix(in oklab, var(--score) 13%, transparent);
+  border-color: color-mix(in oklab, var(--score) 38%, transparent);
+  /* نصٌّ داكن من لون الدرجة نفسه: ٥٠٪ لون + ٥٠٪ حبر ⇒ تباين ≥ ٤.٥ على التعبئة الفاتحة */
+  color: color-mix(in oklab, var(--score) 50%, #2d1f17);
+}
+html.dark .chip-score {
+  background-color: color-mix(in oklab, var(--score) 22%, transparent);
+  border-color: color-mix(in oklab, var(--score) 48%, transparent);
+  color: color-mix(in oklab, var(--score) 26%, #f5ebe1);
+}
+
+/* ---- Authentic Mushaf page (Uthmani ornament feel) ---- */
+/* ---- Quran text face — ONE family, proven complete ----------------------
+   ثلاث محاولات فاشلة علّمتنا الشرط الوحيد الذي لا تنازل عنه: **خطٌّ واحد يحمل
+   رسماً حقيقياً لكل محارف النصّ العثماني**، فلا تسقط كلمةٌ على خطّ آخر ولا
+   يُرسم محرفٌ بمربّع .notdef المنقّط ◌:
+     • KFGQPC Uthmanic Hafs (نسخة مقتطعة ٨٧KB): ترسم عدداً من علامات الوقف
+       والمحارف الدقيقة كمربّع .notdef المنقّط، وألفها الخنجرية تفقد مرساة
+       العلامة-على-العلامة فتتزاحم فوق الحرف.
+     • KFGQPC «Hafs Smart»: خطّ **بترميزٍ قديمٍ غير يونيكوديّ** (لا يحمل أياً من
+       محارف البيانات الـ٧٩ في جدول cmap) ⇒ سقط النصّ كلّه على خطوط النظام
+       وظهرت دوائر منقّطة ولم تكن الحروف بخطّ المصحف أصلاً.
+     • KFGQPC Uthman Taha Naskh (TN1) وأمثاله: خطوط عرض/عناوين بلا معظم علامات
+       الوقف العثمانية (٢٢ محرفاً ناقصاً).
+   والحلّ الذي **تحقّقنا منه بمقاس الحرف**: Scheherazade New — خطّ نسخيّ
+   قرآنّي (SIL، رخصة OFL) يرسم المحارف الـ٧٩ كلّها بنفسه، بعلاماته ومراسي
+   التعلّق كاملةً، وبلا أي سلسلة بدائل داخل الكلمة. */
+@font-face {
+  font-family: "Quran Text";
+  src: url("/fonts/ScheherazadeNew-arabic.woff2") format("woff2");
+  font-display: swap;
+  font-weight: 400;
+}
+
+/* Numeral face for the mushaf chrome: a classic Naskh / Quranic face, never a
+   modern sans. Digits are taken from the same Naskh file, so ( ٣٥٣ ) and the
+   number inside every ayah medallion are drawn by one calligraphic hand. */
+@font-face {
+  font-family: "QuranNaskh";
+  src: url("/fonts/ScheherazadeNew-arabic.woff2") format("woff2");
+  font-display: swap;
+  font-weight: 400;
+  unicode-range: U+0660-0669, U+06F0-06F9;
+}
+
+/* Quran text: proper Uthmani shaping + ligatures; NEVER letter-spacing.
+   ONE family for the whole word — the complete KFGQPC face covers every Uthmani
+   mark, so nothing falls through mid-word and the shaping chain stays intact. */
+.font-quran {
+  font-family: "Quran Text", "Amiri Quran", "Scheherazade New", "Traditional Arabic", serif;
+  letter-spacing: normal !important;
+  word-spacing: normal;
+  font-feature-settings: "liga" 1, "calt" 1, "rlig" 1, "cswh" 1, "mset" 1;
+  font-variant-ligatures: common-ligatures contextual;
+  text-rendering: optimizeLegibility;
+}
+
+/* Generic mushaf fallback (used for surah names / juz) */
+.font-mushaf {
+  font-family: "Quran Text", "Amiri Quran", "Scheherazade New", serif;
+  letter-spacing: normal !important;
+}
+
+/* ⛔ «خطّ المصحف لا تغيّره»: أسطر المصحف كانت ترث خطّ body، فبتغيير خطّ النظام
+   إلى ثمانية كانت ستتغيّر. تُثبَّت هنا على سلسلة ما قبل التغيير حرفياً، فلا
+   يتأثّر النصّ القرآنيّ إطلاقاً — وخطّ الواجهة وحده هو ما تغيّر. */
+.mushaf-line {
+  font-family: "Cairo", -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI",
+    "Noto Sans", "Noto Naskh Arabic", sans-serif;
+}
+
+/* Quranic PAUSE signs (U+06D6–U+06DC — ۖ ۗ ۘ ۙ ۚ ۛ ۜ …). The hafs font paints
+   them low and heavy, so they clash with the letter bodies. They are rendered
+   as a raised annotation instead: their own inline box, lifted clear of the
+   letters, sized down like the printed mushaf's superscript waqf marks.
+   They come from the SAME Quran face as the letters (one family per word), so
+   the join/anchor chain is never broken and no fallback glyph appears. */
+.mushaf-waqf {
+  /* Ink geometry of these signs (measured in Scheherazade New): the glyph sits
+     between 0.74em and 1.22em ABOVE the baseline. Sizing it at 0.7em and lifting
+     the box by 0.28em puts its ink bottom just clear of the tallest letters
+     (alef ≈0.75em) while its top stays within the row — so it reads clearly and
+     never reaches the line above. */
+  font-size: 0.7em;
+  line-height: 0;
+  vertical-align: 0.28em;
+  padding-inline-start: 0.06em;
+  letter-spacing: normal !important;
+}
+
+/* ONE numeric face for the whole mushaf chrome. The ayah-medallion numerals and
+   the page number share it, so every digit on the page is drawn by one hand.
+   A classic Naskh / Quranic face — NEVER a modern sans, and never the Quran
+   font itself (that one draws Arabic-Indic digits as ornate circled glyphs). */
+.mushaf-num,
+.mushaf-digit,
+.mushaf-badge-num {
+  font-family: "Amiri Quran", "QuranNaskh", "Scheherazade New", "Noto Naskh Arabic", serif;
+  font-weight: 500;
+  letter-spacing: 0;
+  font-variant-numeric: normal;
+}
+.mushaf-digit {
+  color: #2a1d12;
+}
+html.dark .mushaf-digit {
+  color: #fbf6ec;
+}
+/* SVG twin of .mushaf-digit (same face, fill instead of color). */
+.mushaf-badge-num {
+  fill: #2a1d12;
+}
+html.dark .mushaf-badge-num {
+  fill: #fbf6ec;
+}
+
+/* Plain numerals — MUST NOT use the Quran font: KFGQPC Hafs draws Arabic-Indic
+   digits as ornate "ayah rosette" glyphs (circled), which breaks page numbers
+   and ayah numbers. Numerals always use a clean text font. */
+.mushaf-num {
+  font-family: "Cairo", system-ui, -apple-system, "Noto Naskh Arabic", "Segoe UI", sans-serif;
+  letter-spacing: 0;
+  font-variant-numeric: normal;
+}
+
+/* Ornamental ink for Quranic framing (ayah rosettes, page cartouche, header).
+   Warm gold in light mode, soft sand/amber in OLED dark — never stark white. */
+.mushaf-orn {
+  color: #8a5a1e;
+}
+html.dark .mushaf-orn {
+  color: #d9b25a;
+}
+.mushaf-orn-soft {
+  color: #a8751a;
+}
+html.dark .mushaf-orn-soft {
+  color: #b8913f;
+}
+
+.mushaf-page {
+  position: relative;
+}
+.mushaf-page::before {
+  content: "";
+  position: absolute;
+  inset: 6px;
+  border: 1.5px solid rgb(217 164 102 / 0.35);
+  border-radius: 16px;
+  pointer-events: none;
+}
+.mushaf-page::after {
+  content: "❁";
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: rgb(217 164 102 / 0.5);
+  font-size: 14px;
+  pointer-events: none;
+}
+
+/* ============================================================
+   الطباعة (PDF من المتصفّح) — ورقة A4 نظيفة، سوادٌ على بياض.
+   القاعدة الحاسمة: في الطباعة نخفي **كل** عناصر body إلا جذر الطباعة
+   (#print-root) — فاللوحة وبطاقة الطالب والترويسة والأزرار والتدرّج كلّها
+   تختفي، ولا يبقى إلا جدول الخطة الشهرية. كان العطل السابق أنَّ print()
+   كان يطبع الشاشة الظاهرة (اللوحة) لا المستند المستقلّ.
+   ============================================================ */
+#print-root {
+  display: none;
+}
+
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 8mm 10mm;
+  }
+  html,
+  body {
+    background: #fff !important;
+    color: #000 !important;
+  }
+  /* 🚫 لا شيء يُطبَع إلا مستند الخطّة */
+  body > *:not(#print-root) {
+    display: none !important;
+  }
+  #print-root {
+    display: block !important;
+    font-family: 'Thmanyah Display', 'Thmanyah Sans', system-ui, sans-serif;
+  }
+  .print-doc {
+    color: #000;
+    background: #fff;
+    padding: 0;
+  }
+  /* ماركة التطبيق: «مُدَبِّر» + سطرها الوصفيّ — كما في الرئيسيّة */
+  .print-brand {
+    text-align: center;
+    margin: 0 0 2pt;
+  }
+  .print-brand-name {
+    font-size: 24pt;
+    font-weight: 800;
+    margin: 0;
+    line-height: 1.1;
+  }
+  .print-brand-sub {
+    font-size: 9.5pt;
+    font-weight: 700;
+    color: #6b5b4a;
+    margin: 1pt 0 0;
+  }
+  .print-title {
+    font-size: 15pt;
+    font-weight: 800;
+    margin: 6pt 0 3pt;
+    text-align: center;
+  }
+  .print-meta {
+    margin: 0 0 5pt;
+    font-size: 9.5pt;
+    line-height: 1.5;
+    text-align: center;
+  }
+  .print-meta strong {
+    font-weight: 800;
+  }
+  .print-sep {
+    margin: 0 6pt;
+  }
+  .print-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 9.5pt; /* ≈ 11px: يوفّر سطوراً فتدخل كل أيام الشهر في ورقةٍ واحدة */
+  }
+  .print-table th,
+  .print-table td {
+    border: 0.6pt solid #000;
+    padding: 1pt 4pt;
+    text-align: right;
+    vertical-align: middle;
+    line-height: 1.25;
+  }
+  .print-table thead th {
+    background: #f3f4f6;
+    font-weight: 800;
+    text-align: center;
+    height: 15pt;
+  }
+  /* ارتفاعٌ مريح للكتابة اليدويّة بحيث لا تتجاوز الورقة صفحةً واحدة */
+  .print-table tbody td {
+    height: 22pt;
+  }
+  .print-day {
+    font-weight: 800;
+    white-space: nowrap;
+  }
+  .print-off {
+    background: #faf6f1;
+  }
+
+  tr {
+    page-break-inside: avoid;
+  }
+  thead {
+    display: table-header-group;
+  }
+}

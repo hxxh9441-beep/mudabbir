@@ -1,0 +1,25 @@
+# التبعيّات
+node_modules/
+.pnpm-store/
+
+# المخرجات
+dist/
+dist-ssr/
+*.local
+.vite/
+coverage/
+
+# المحرّرات والملفّات المؤقّتة
+.DS_Store
+Thumbs.db
+*.log
+npm-debug.log*
+.eslintcache
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# بيئة
+.env
+.env.*
+!.env.example
