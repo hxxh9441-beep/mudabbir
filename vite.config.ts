@@ -4,7 +4,12 @@ import { VitePWA } from 'vite-plugin-pwa';
 import { resolve } from 'path';
 
 // https://vitejs.dev/config/
+// GitHub Pages ينشر المستودع تحت مسارٍ فرعيّ: /quran-circle/
+// نُثبّته عند البناء داخل Actions فقط، فيبقى التطوير والمعاينة المحلية على الجذر '/'.
+const base = process.env.GITHUB_ACTIONS ? '/quran-circle/' : '/';
+
 export default defineConfig({
+  base,
   plugins: [
     react(),
     /**
