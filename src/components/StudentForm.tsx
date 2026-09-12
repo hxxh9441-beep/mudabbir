@@ -58,12 +58,12 @@ const round05 = (v: number) => Math.max(0, Math.round((Number.isFinite(v) ? v : 
 const fmt = (v: number) => (Number.isInteger(v) ? String(v) : v.toFixed(1));
 const arDigits = (s: string) => s.replace(/\d/g, (d) => '٠١٢٣٤٥٦٧٨٩'[Number(d)]);
 
-const LABEL_CLS = 'mb-2 block text-sm font-bold text-amber-100/80';
+const LABEL_CLS = 'mb-2 block text-sm font-bold text-[#5A4636] dark:text-amber-100/80';
 const chipCls = (on: boolean) =>
   `press rounded-full px-3.5 py-2 text-sm font-bold ring-1 ring-inset transition ${
     on
       ? 'bg-[#B8860B] text-white ring-amber-400/50 shadow-md shadow-amber-800/30'
-      : 'bg-amber-100/10 text-amber-100/70 ring-amber-500/20 hover:bg-amber-100/20'
+      : 'bg-black/[0.05] dark:bg-amber-100/10 text-[#5A4636] dark:text-amber-100/70 ring-black/10 dark:ring-amber-500/20 hover:bg-black/10 dark:hover:bg-amber-100/20'
   }`;
 
 /** القيم الافتراضية لطالبٍ جديد: ابتدائي/رابع · ٥ أسطر من الناس ١ · ٣ أوجه. */
@@ -81,13 +81,13 @@ export const NEW_STUDENT_DEFAULTS = {
 /** ترويسة قسم منطقي */
 function SectionTitle({ n, title, sub }: { n: string; title: string; sub?: string }) {
   return (
-    <div className="flex items-center gap-2 border-b border-amber-500/15 pb-2">
+    <div className="flex items-center gap-2 border-b border-amber-900/10 dark:border-amber-500/15 pb-2">
       <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#B8860B] text-[11px] font-extrabold text-white">
         {n}
       </span>
       <div className="min-w-0">
-        <p className="text-sm font-extrabold text-[#F5EBE1]">{title}</p>
-        {sub && <p className="text-[11px] text-amber-100/40">{sub}</p>}
+        <p className="text-sm font-extrabold text-[#2D1F17] dark:text-[#F5EBE1]">{title}</p>
+        {sub && <p className="text-[11px] text-[#8a7261] dark:text-amber-100/40">{sub}</p>}
       </div>
     </div>
   );
@@ -115,17 +115,17 @@ function Switch({
       aria-checked={on}
       onClick={() => onChange(!on)}
       className={`press flex w-full items-center justify-between gap-3 rounded-xl px-3 py-2.5 text-right ring-1 ring-inset transition ${
-        on ? 'bg-amber-100/15 ring-amber-400/40' : 'bg-amber-100/5 ring-amber-500/15 hover:bg-amber-100/10'
+        on ? 'bg-black/[0.07] dark:bg-amber-100/15 ring-[#B8860B]/50 dark:ring-amber-400/40' : 'bg-black/[0.03] dark:bg-amber-100/5 ring-amber-900/10 dark:ring-amber-500/15 hover:bg-black/[0.08] dark:hover:bg-amber-100/10'
       }`}
     >
       <span className="min-w-0">
-        <span className={`block text-xs font-extrabold ${on ? 'text-amber-200' : 'text-amber-100/70'}`}>
+        <span className={`block text-xs font-extrabold ${on ? 'text-[#B8860B] dark:text-amber-200' : 'text-[#5A4636] dark:text-amber-100/70'}`}>
           {label}
         </span>
-        {hint && <span className="block text-[10px] text-amber-100/40">{hint}</span>}
+        {hint && <span className="block text-[10px] text-[#8a7261] dark:text-amber-100/40">{hint}</span>}
       </span>
       <span
-        className={`relative h-6 w-11 shrink-0 rounded-full transition ${on ? accent : 'bg-amber-100/20'}`}
+        className={`relative h-6 w-11 shrink-0 rounded-full transition ${on ? accent : 'bg-black/[0.10] dark:bg-amber-100/20'}`}
       >
         <span
           className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-all ${
@@ -181,7 +181,7 @@ function TargetField({
           type="button"
           onClick={() => onChange(round05(value - 0.5))}
           aria-label={`تقليل ${label}`}
-          className="press flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-amber-100/10 text-amber-100/80 ring-1 ring-inset ring-amber-500/20 transition hover:bg-amber-100/20"
+          className="press flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-black/[0.05] dark:bg-amber-100/10 text-[#5A4636] dark:text-amber-100/80 ring-1 ring-inset ring-black/10 dark:ring-amber-500/20 transition hover:bg-black/10 dark:hover:bg-amber-100/20"
         >
           <Minus className="h-4 w-4" />
         </button>
@@ -194,17 +194,17 @@ function TargetField({
           dir="ltr"
           value={Number.isFinite(value) ? value : 0}
           onChange={(e) => onChange(round05(Number(e.target.value)))}
-          className="h-11 min-w-0 flex-1 rounded-xl border border-amber-500/20 bg-amber-100/10 px-3 text-center text-lg font-extrabold text-[#F5EBE1] outline-none transition focus:border-amber-400/60 focus:ring-2 focus:ring-amber-500"
+          className="h-11 min-w-0 flex-1 rounded-xl border border-black/10 dark:border-amber-500/20 bg-black/[0.05] dark:bg-amber-100/10 px-3 text-center text-lg font-extrabold text-[#2D1F17] dark:text-[#F5EBE1] outline-none transition focus:border-amber-400/60 focus:ring-2 focus:ring-amber-500"
         />
         <button
           type="button"
           onClick={() => onChange(round05(value + 0.5))}
           aria-label={`زيادة ${label}`}
-          className="press flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-amber-100/10 text-amber-100/80 ring-1 ring-inset ring-amber-500/20 transition hover:bg-amber-100/20"
+          className="press flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-black/[0.05] dark:bg-amber-100/10 text-[#5A4636] dark:text-amber-100/80 ring-1 ring-inset ring-black/10 dark:ring-amber-500/20 transition hover:bg-black/10 dark:hover:bg-amber-100/20"
         >
           <Plus className="h-4 w-4" />
         </button>
-        <span className="shrink-0 text-xs font-bold text-amber-100/50">{unit}</span>
+        <span className="shrink-0 text-xs font-bold text-[#6B5B4A] dark:text-amber-100/50">{unit}</span>
       </div>
     </div>
   );
@@ -262,8 +262,8 @@ function ProgressionCard({
   const hasCursor = fromSurah !== surah || fromAyah !== ayah;
 
   return (
-    <div className="rounded-2xl border border-amber-500/15 bg-amber-100/[0.04] p-3.5">
-      <p className="mb-3 flex items-center gap-2 text-xs font-extrabold text-amber-100/70">
+    <div className="rounded-2xl border border-amber-900/10 dark:border-amber-500/15 bg-black/[0.03] dark:bg-amber-100/[0.04] p-3.5">
+      <p className="mb-3 flex items-center gap-2 text-xs font-extrabold text-[#5A4636] dark:text-amber-100/70">
         <Compass className="h-3.5 w-3.5 shrink-0 text-[#B8860B]" />
         {title}
       </p>
@@ -275,10 +275,10 @@ function ProgressionCard({
           setQuery('');
         }}
         aria-expanded={picking}
-        className="press flex w-full items-center justify-between gap-2 rounded-xl bg-amber-100/10 px-3 py-2.5 text-sm font-bold text-[#F5EBE1] ring-1 ring-inset ring-amber-500/20 hover:bg-amber-100/20"
+        className="press flex w-full items-center justify-between gap-2 rounded-xl bg-black/[0.05] dark:bg-amber-100/10 px-3 py-2.5 text-sm font-bold text-[#2D1F17] dark:text-[#F5EBE1] ring-1 ring-inset ring-black/10 dark:ring-amber-500/20 hover:bg-black/10 dark:hover:bg-amber-100/20"
       >
-        <span className="text-amber-100/60">السورة</span>
-        <span className="flex items-center gap-1.5 font-extrabold text-amber-200">
+        <span className="text-[#6B5B4A] dark:text-amber-100/60">السورة</span>
+        <span className="flex items-center gap-1.5 font-extrabold text-[#B8860B] dark:text-amber-200">
           {surahShort(surah)}
           <Search className="h-3.5 w-3.5 opacity-60" />
         </span>
@@ -291,11 +291,11 @@ function ProgressionCard({
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder={filter ? 'ابحث في المحفوظ…' : 'ابحث عن سورة…'}
-            className="w-full rounded-xl border border-amber-500/20 bg-amber-100/10 px-3 py-2 text-sm text-[#F5EBE1] placeholder-amber-200/40 outline-none focus:border-amber-400/60"
+            className="w-full rounded-xl border border-black/10 dark:border-amber-500/20 bg-black/[0.05] dark:bg-amber-100/10 px-3 py-2 text-sm text-[#2D1F17] dark:text-[#F5EBE1] placeholder-[#8a7261] dark:placeholder-amber-200/40 outline-none focus:border-amber-400/60"
           />
-          <div className="mt-1.5 max-h-44 overflow-y-auto rounded-xl ring-1 ring-inset ring-amber-500/15">
+          <div className="mt-1.5 max-h-44 overflow-y-auto rounded-xl ring-1 ring-inset ring-amber-900/10 dark:ring-amber-500/15">
             {results.length === 0 && (
-              <p className="px-3 py-2 text-xs text-amber-100/40">لا نتائج داخل النطاق</p>
+              <p className="px-3 py-2 text-xs text-[#8a7261] dark:text-amber-100/40">لا نتائج داخل النطاق</p>
             )}
             {results.map((s) => (
               <button
@@ -310,11 +310,11 @@ function ProgressionCard({
                 className={`flex w-full items-center justify-between gap-2 px-3 py-2 text-sm ${
                   s.n === surah
                     ? 'bg-[#B8860B]/25 font-extrabold text-white'
-                    : 'text-amber-100/80 hover:bg-amber-100/10'
+                    : 'text-[#5A4636] dark:text-amber-100/80 hover:bg-black/[0.08] dark:hover:bg-amber-100/10'
                 }`}
               >
                 <span>{s.key}</span>
-                <span className="text-[11px] text-amber-100/35">
+                <span className="text-[11px] text-[#8a7261] dark:text-amber-100/35">
                   {s.ayahs} آية · ص{s.page}
                 </span>
               </button>
@@ -324,12 +324,12 @@ function ProgressionCard({
       )}
 
       <div className="mt-2 flex items-center gap-2">
-        <span className="shrink-0 text-xs font-bold text-amber-100/60">رقم الآية</span>
+        <span className="shrink-0 text-xs font-bold text-[#6B5B4A] dark:text-amber-100/60">رقم الآية</span>
         <button
           type="button"
           onClick={() => onAyah(Math.max(1, clampedAyah - 1))}
           aria-label="إنقاص رقم الآية"
-          className="press flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-amber-100/10 text-amber-100/80 ring-1 ring-inset ring-amber-500/20 hover:bg-amber-100/20"
+          className="press flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-black/[0.05] dark:bg-amber-100/10 text-[#5A4636] dark:text-amber-100/80 ring-1 ring-inset ring-black/10 dark:ring-amber-500/20 hover:bg-black/10 dark:hover:bg-amber-100/20"
         >
           <Minus className="h-3.5 w-3.5" />
         </button>
@@ -340,21 +340,21 @@ function ProgressionCard({
           dir="ltr"
           value={clampedAyah}
           onChange={(e) => onAyah(Math.min(maxAyah, Math.max(1, Number(e.target.value) || 1)))}
-          className="h-9 min-w-0 flex-1 rounded-lg border border-amber-500/20 bg-amber-100/10 px-2 text-center text-sm font-extrabold text-[#F5EBE1] outline-none focus:border-amber-400/60"
+          className="h-9 min-w-0 flex-1 rounded-lg border border-black/10 dark:border-amber-500/20 bg-black/[0.05] dark:bg-amber-100/10 px-2 text-center text-sm font-extrabold text-[#2D1F17] dark:text-[#F5EBE1] outline-none focus:border-amber-400/60"
         />
         <button
           type="button"
           onClick={() => onAyah(Math.min(maxAyah, clampedAyah + 1))}
           aria-label="زيادة رقم الآية"
-          className="press flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-amber-100/10 text-amber-100/80 ring-1 ring-inset ring-amber-500/20 hover:bg-amber-100/20"
+          className="press flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-black/[0.05] dark:bg-amber-100/10 text-[#5A4636] dark:text-amber-100/80 ring-1 ring-inset ring-black/10 dark:ring-amber-500/20 hover:bg-black/10 dark:hover:bg-amber-100/20"
         >
           <Plus className="h-3.5 w-3.5" />
         </button>
-        <span className="shrink-0 text-[11px] font-bold text-amber-100/35">/{maxAyah}</span>
+        <span className="shrink-0 text-[11px] font-bold text-[#8a7261] dark:text-amber-100/35">/{maxAyah}</span>
       </div>
 
-      <p className="mb-1.5 mt-3 text-xs font-bold text-amber-100/60">
-        اتجاه السير <span className="font-normal text-amber-100/40">(اختيارٌ حرّ)</span>
+      <p className="mb-1.5 mt-3 text-xs font-bold text-[#6B5B4A] dark:text-amber-100/60">
+        اتجاه السير <span className="font-normal text-[#8a7261] dark:text-amber-100/40">(اختيارٌ حرّ)</span>
       </p>
       <div className="space-y-1.5">
         {(Object.keys(DIRECTION_LABEL) as ProgressDirection[]).map((d) => {
@@ -368,7 +368,7 @@ function ProgressionCard({
               className={`press w-full rounded-xl px-3 py-2 text-xs font-extrabold ring-1 ring-inset transition ${
                 on
                   ? 'bg-[#B8860B] text-white ring-amber-400/50 shadow-md shadow-amber-800/30'
-                  : 'bg-amber-100/10 text-amber-100/70 ring-amber-500/20 hover:bg-amber-100/20'
+                  : 'bg-black/[0.05] dark:bg-amber-100/10 text-[#5A4636] dark:text-amber-100/70 ring-black/10 dark:ring-amber-500/20 hover:bg-black/10 dark:hover:bg-amber-100/20'
               }`}
             >
               {DIRECTION_LABEL[d]}
@@ -377,13 +377,13 @@ function ProgressionCard({
         })}
       </div>
 
-      <div className="mt-3 rounded-xl bg-[#B8860B]/10 px-3 py-2 ring-1 ring-inset ring-amber-500/20">
-        <p className="text-[11px] font-bold text-amber-100/55">المهمّة القادمة</p>
-        <p className="mt-0.5 text-sm font-extrabold text-amber-200">
+      <div className="mt-3 rounded-xl bg-[#B8860B]/10 px-3 py-2 ring-1 ring-inset ring-black/10 dark:ring-amber-500/20">
+        <p className="text-[11px] font-bold text-[#6B5B4A] dark:text-amber-100/55">المهمّة القادمة</p>
+        <p className="mt-0.5 text-sm font-extrabold text-[#B8860B] dark:text-amber-200">
           {task ? describeAssignment(task) : '—'}
         </p>
         {task && (
-          <p className="mt-1 text-[11px] leading-relaxed text-amber-100/45">
+          <p className="mt-1 text-[11px] leading-relaxed text-[#6B5B4A] dark:text-amber-100/45">
             {task.ayahs} آية ≈ {task.pages} وجه · الصفحات {task.pageFrom}–{task.pageTo}
             {task.nextStart && (
               <>
@@ -625,7 +625,7 @@ export default function StudentForm({
       {/* ── الهوية ── */}
       <div className="space-y-4">
         <div>
-          <label className="mb-2 block text-sm font-bold text-amber-100/80" htmlFor={`${idPrefix}-name`}>
+          <label className="mb-2 block text-sm font-bold text-[#5A4636] dark:text-amber-100/80" htmlFor={`${idPrefix}-name`}>
             اسم الطالب
           </label>
           <input
@@ -635,12 +635,12 @@ export default function StudentForm({
             onChange={(e) => setName(e.target.value)}
             required
             placeholder="الاسم الكامل"
-            className="w-full rounded-xl border border-amber-500/20 bg-amber-100/10 px-4 py-3 text-[#F5EBE1] placeholder-amber-200/40 outline-none transition focus:border-amber-400/60 focus:bg-amber-100/15 focus:ring-2 focus:ring-amber-500"
+            className="w-full rounded-xl border border-black/10 dark:border-amber-500/20 bg-black/[0.05] dark:bg-amber-100/10 px-4 py-3 text-[#2D1F17] dark:text-[#F5EBE1] placeholder-[#8a7261] dark:placeholder-amber-200/40 outline-none transition focus:border-amber-400/60 focus:bg-black/[0.07] dark:bg-amber-100/15 focus:ring-2 focus:ring-amber-500"
           />
         </div>
 
         <div>
-          <label className="mb-2 block text-sm font-bold text-amber-100/80">المرحلة</label>
+          <label className="mb-2 block text-sm font-bold text-[#5A4636] dark:text-amber-100/80">المرحلة</label>
           <div className="flex flex-wrap gap-1.5">
             {STAGES.map((s) => (
               <button
@@ -663,8 +663,8 @@ export default function StudentForm({
 
         {stage && (
           <div>
-            <label className="mb-2 block text-sm font-bold text-amber-100/80">
-              الصف <span className="font-normal text-amber-100/50">({stage})</span>
+            <label className="mb-2 block text-sm font-bold text-[#5A4636] dark:text-amber-100/80">
+              الصف <span className="font-normal text-[#6B5B4A] dark:text-amber-100/50">({stage})</span>
             </label>
             <div className="flex flex-wrap gap-1.5">
               {gradesOf(stage).map((g) => (
@@ -684,7 +684,7 @@ export default function StudentForm({
       </div>
 
       {/* ══ القسم ١: الحفظ ══ */}
-      <div className="space-y-4 rounded-2xl border border-amber-500/20 bg-black/15 p-3.5">
+      <div className="space-y-4 rounded-2xl border border-black/10 dark:border-amber-500/20 bg-black/15 p-3.5">
         <SectionTitle n="١" title="الحفظ" sub="المقدار اليومي ونقطة البداية والاتجاه" />
         <TargetField
           id={`${idPrefix}-hifz`}
@@ -717,14 +717,14 @@ export default function StudentForm({
             note={memorized ? `المحفوظ حتى الآن: ${describeMemorized(memorized)}` : undefined}
           />
         ) : (
-          <p className="py-2 text-center text-xs font-bold text-amber-100/40">
+          <p className="py-2 text-center text-xs font-bold text-[#8a7261] dark:text-amber-100/40">
             جارٍ تحميل فهرس المنهج…
           </p>
         )}
       </div>
 
       {/* ══ القسم ٢: المراجعة ══ */}
-      <div className="space-y-4 rounded-2xl border border-amber-500/20 bg-black/15 p-3.5">
+      <div className="space-y-4 rounded-2xl border border-black/10 dark:border-amber-500/20 bg-black/15 p-3.5">
         <SectionTitle n="٢" title="المراجعة" sub="المقدار ونطاق المراجعة الذكي" />
 
         <Switch
@@ -735,17 +735,17 @@ export default function StudentForm({
         />
 
         {autoSync && memorized && (
-          <div className="flex items-start gap-2 rounded-xl bg-amber-500/10 px-3 py-2 ring-1 ring-inset ring-amber-500/20">
+          <div className="flex items-start gap-2 rounded-xl bg-amber-500/10 px-3 py-2 ring-1 ring-inset ring-black/10 dark:ring-amber-500/20">
             <Sparkles className="mt-0.5 h-3.5 w-3.5 shrink-0 text-amber-300" />
-            <div className="text-[11px] leading-relaxed text-amber-100/70">
+            <div className="text-[11px] leading-relaxed text-[#5A4636] dark:text-amber-100/70">
               {hasMemorized ? (
                 <>
                   نطاق المراجعة المتاح:{' '}
-                  <span className="font-extrabold text-amber-200">
+                  <span className="font-extrabold text-[#B8860B] dark:text-amber-200">
                     {describeMemorized(memorized)}
                   </span>
                   {memorized.boundarySurah >= 1 && (
-                    <span className="block text-amber-100/55">
+                    <span className="block text-[#6B5B4A] dark:text-amber-100/55">
                       الدرس الجاري «{surahShort(memorized.boundarySurah)}» يُضاف إلى النطاق عند
                       إكماله
                     </span>
@@ -754,7 +754,7 @@ export default function StudentForm({
               ) : (
                 <>
                   لا محفوظ بعد —{' '}
-                  <span className="font-extrabold text-amber-200">
+                  <span className="font-extrabold text-[#B8860B] dark:text-amber-200">
                     تبدأ المراجعة من نقطة بداية الحفظ ({surahShort(hifzSurah)} {hifzAyah})
                   </span>
                 </>
@@ -812,7 +812,7 @@ export default function StudentForm({
       </div>
 
       {/* ══ القسم ٣: الحالة ══ */}
-      <div className="space-y-3 rounded-2xl border border-amber-500/20 bg-black/15 p-3.5">
+      <div className="space-y-3 rounded-2xl border border-black/10 dark:border-amber-500/20 bg-black/15 p-3.5">
         <SectionTitle n="٣" title="الحالة" sub="إيقاف الحفظ مؤقتاً" />
         <Switch
           on={paused}
@@ -825,12 +825,12 @@ export default function StudentForm({
         {paused && (
           <div className="flex items-center gap-2 rounded-xl bg-amber-500/10 px-3 py-2.5 ring-1 ring-inset ring-amber-500/25">
             <Pause className="h-4 w-4 shrink-0 text-amber-300" />
-            <span className="shrink-0 text-xs font-bold text-amber-100/70">عدد الأيام</span>
+            <span className="shrink-0 text-xs font-bold text-[#5A4636] dark:text-amber-100/70">عدد الأيام</span>
             <button
               type="button"
               onClick={() => setPauseDays((d) => Math.max(1, Math.round(d) - 1))}
               aria-label="إنقاص عدد الأيام"
-              className="press flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-amber-100/10 text-amber-100/80 ring-1 ring-inset ring-amber-500/20 hover:bg-amber-100/20"
+              className="press flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-black/[0.05] dark:bg-amber-100/10 text-[#5A4636] dark:text-amber-100/80 ring-1 ring-inset ring-black/10 dark:ring-amber-500/20 hover:bg-black/10 dark:hover:bg-amber-100/20"
             >
               <Minus className="h-3.5 w-3.5" />
             </button>
@@ -842,17 +842,17 @@ export default function StudentForm({
               aria-label="عدد الأيام"
               value={Math.max(1, Math.round(pauseDays))}
               onChange={(e) => setPauseDays(Math.min(365, Math.max(1, Number(e.target.value) || 1)))}
-              className="h-9 min-w-0 flex-1 rounded-lg border border-amber-500/20 bg-amber-100/10 px-2 text-center text-sm font-extrabold text-[#F5EBE1] outline-none focus:border-amber-400/60"
+              className="h-9 min-w-0 flex-1 rounded-lg border border-black/10 dark:border-amber-500/20 bg-black/[0.05] dark:bg-amber-100/10 px-2 text-center text-sm font-extrabold text-[#2D1F17] dark:text-[#F5EBE1] outline-none focus:border-amber-400/60"
             />
             <button
               type="button"
               onClick={() => setPauseDays((d) => Math.min(365, Math.round(d) + 1))}
               aria-label="زيادة عدد الأيام"
-              className="press flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-amber-100/10 text-amber-100/80 ring-1 ring-inset ring-amber-500/20 hover:bg-amber-100/20"
+              className="press flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-black/[0.05] dark:bg-amber-100/10 text-[#5A4636] dark:text-amber-100/80 ring-1 ring-inset ring-black/10 dark:ring-amber-500/20 hover:bg-black/10 dark:hover:bg-amber-100/20"
             >
               <Plus className="h-3.5 w-3.5" />
             </button>
-            <span className="shrink-0 text-[11px] font-bold text-amber-100/45">يوم</span>
+            <span className="shrink-0 text-[11px] font-bold text-[#6B5B4A] dark:text-amber-100/45">يوم</span>
           </div>
         )}
       </div>
@@ -862,7 +862,7 @@ export default function StudentForm({
         <button
           type="button"
           onClick={onClose}
-          className="press flex-1 rounded-xl bg-amber-100/10 py-3 text-sm font-bold text-amber-100/80 hover:bg-amber-100/20"
+          className="press flex-1 rounded-xl bg-black/[0.05] dark:bg-amber-100/10 py-3 text-sm font-bold text-[#5A4636] dark:text-amber-100/80 hover:bg-black/10 dark:hover:bg-amber-100/20"
         >
           إلغاء
         </button>

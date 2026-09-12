@@ -47,18 +47,18 @@ export default function EditStudentModal({
         role="dialog"
         aria-modal="true"
         aria-label="تعديل بيانات الطالب"
-        className="animate-slide-up relative max-h-[92dvh] w-full max-w-lg overflow-y-auto rounded-t-3xl border-t border-amber-500/20 bg-[#241A14]/95 p-6 pb-8 shadow-2xl backdrop-blur-2xl sm:rounded-3xl sm:border sm:border-amber-500/15"
+        className="animate-slide-up relative max-h-[92dvh] w-full max-w-lg overflow-y-auto rounded-t-3xl border-t border-amber-900/10 bg-amber-50/95 p-6 pb-8 shadow-2xl backdrop-blur-2xl sm:rounded-3xl sm:border dark:border-white/10 dark:bg-[#241A14]/95"
       >
-        <div className="mx-auto mb-4 h-1.5 w-11 rounded-full bg-amber-200/40 sm:hidden" />
+        <div className="mx-auto mb-4 h-1.5 w-11 rounded-full bg-black/15 dark:bg-amber-200/40 sm:hidden" />
 
         <div className="mb-5 flex items-center justify-between gap-2">
-          <h2 className="flex items-center gap-2 text-xl font-extrabold text-[#F5EBE1]">
+          <h2 className="flex items-center gap-2 text-xl font-extrabold text-[#2D1F17] dark:text-[#F5EBE1]">
             <Pencil className="h-5 w-5 text-[#B8860B]" />
             تعديل بيانات الطالب
           </h2>
           <button
             onClick={onClose}
-            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-amber-100/10 text-amber-100/70 hover:bg-amber-100/20"
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-black/[0.05] text-[#6B5B4A] hover:bg-black/10 dark:bg-white/10 dark:text-amber-100/70 dark:hover:bg-white/20"
             aria-label="إغلاق"
           >
             ✕
@@ -81,24 +81,24 @@ export default function EditStudentModal({
             <button
               type="button"
               onClick={() => setConfirmDelete(true)}
-              className="press flex w-full items-center justify-center gap-2 rounded-xl border border-rose-500/30 bg-rose-500/10 py-3 text-sm font-bold text-rose-300 transition hover:bg-rose-500/20"
+              className="press flex w-full items-center justify-center gap-2 rounded-xl border border-rose-500/30 bg-rose-500/10 py-3 text-sm font-bold text-rose-800 transition hover:bg-rose-500/20 dark:text-rose-300"
             >
               <Trash2 className="h-4 w-4" />
               حذف الطالب
             </button>
           ) : (
             <div className="rounded-xl border border-rose-500/30 bg-rose-500/10 p-3">
-              <p className="mb-3 text-sm font-bold text-rose-200">
+              <p className="mb-3 text-sm font-bold text-rose-800 dark:text-rose-200">
                 هل أنت متأكد من حذف الطالب وسجلاته؟
               </p>
-              <p className="mb-3 text-xs leading-relaxed text-rose-200/70">
+              <p className="mb-3 text-xs leading-relaxed text-rose-800/70 dark:text-rose-200/70">
                 سيُحذف «{student.name}» وكل جلسات التسميع المسجّلة له نهائياً. لا يمكن التراجع.
               </p>
               <div className="flex gap-2">
                 <button
                   type="button"
                   onClick={() => setConfirmDelete(false)}
-                  className="press flex-1 rounded-full bg-amber-100/10 py-2 text-xs font-bold text-amber-100/80 hover:bg-amber-100/20"
+                  className="press flex-1 rounded-full bg-black/[0.05] py-2 text-xs font-bold text-[#5A4636] hover:bg-black/10 dark:bg-amber-100/10 dark:text-amber-100/80 dark:hover:bg-amber-100/20"
                 >
                   إلغاء
                 </button>

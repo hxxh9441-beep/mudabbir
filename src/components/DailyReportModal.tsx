@@ -219,7 +219,7 @@ export default function DailyReportModal({
     `press flex-1 rounded-xl px-3 py-2.5 text-sm font-extrabold ring-1 ring-inset transition ${
       on
         ? 'bg-[#B8860B] text-white ring-amber-400/50 shadow-md shadow-amber-800/30'
-        : 'bg-amber-100/10 text-amber-100/70 ring-amber-500/20 hover:bg-amber-100/20'
+        : 'bg-black/[0.05] text-[#5A4636] ring-black/10 hover:bg-black/10 dark:bg-amber-100/10 dark:text-amber-100/70 dark:ring-amber-500/20 dark:hover:bg-amber-100/20'
     }`;
 
   return createPortal(
@@ -230,20 +230,20 @@ export default function DailyReportModal({
         role="dialog"
         aria-modal="true"
         aria-label="التقرير اليومي وإرسال الرسالة"
-        className="animate-slide-up relative flex max-h-[92dvh] w-full max-w-lg flex-col overflow-hidden rounded-t-3xl border-t border-amber-500/20 bg-[#241A14]/95 shadow-2xl backdrop-blur-2xl sm:rounded-3xl sm:border sm:border-amber-500/15"
+        className="animate-slide-up relative flex max-h-[92dvh] w-full max-w-lg flex-col overflow-hidden rounded-t-3xl border-t border-amber-900/10 bg-amber-50/95 shadow-2xl backdrop-blur-2xl sm:rounded-3xl sm:border dark:border-white/10 dark:bg-[#241A14]/95"
       >
         {/* الترويسة */}
-        <div className="shrink-0 border-b border-amber-500/15 px-5 pb-3 pt-4">
-          <div className="mx-auto mb-3 h-1.5 w-11 rounded-full bg-amber-200/40 sm:hidden" />
+        <div className="shrink-0 border-b border-amber-900/10 px-5 pb-3 pt-4 dark:border-amber-500/15">
+          <div className="mx-auto mb-3 h-1.5 w-11 rounded-full bg-black/15 dark:bg-amber-200/40 sm:hidden" />
           <div className="flex items-start justify-between gap-3">
-            <h2 className="flex items-center gap-2 text-lg font-extrabold text-[#F5EBE1]">
+            <h2 className="flex items-center gap-2 text-lg font-extrabold text-[#2D1F17] dark:text-[#F5EBE1]">
               <MessageSquare className="h-5 w-5 shrink-0 text-[#B8860B]" />
               التقرير اليومي — {data.student.name}
             </h2>
             <button
               onClick={onClose}
               aria-label="إغلاق"
-              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-amber-100/10 text-amber-100/70 hover:bg-amber-100/20"
+              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-black/[0.05] text-[#6B5B4A] hover:bg-black/10 dark:bg-white/10 dark:text-amber-100/70 dark:hover:bg-white/20"
             >
               <X className="h-4 w-4" />
             </button>
@@ -277,11 +277,11 @@ export default function DailyReportModal({
           <pre
             data-report-text
             dir="rtl"
-            className="whitespace-pre-wrap break-words rounded-2xl bg-black/25 p-4 text-[13.5px] leading-relaxed text-[#F5EBE1] ring-1 ring-inset ring-amber-500/15"
+            className="whitespace-pre-wrap break-words rounded-2xl bg-black/[0.04] p-4 text-[13.5px] leading-relaxed text-[#2D1F17] ring-1 ring-inset ring-black/10 dark:bg-black/25 dark:text-[#F5EBE1] dark:ring-amber-500/15"
           >
             {text}
           </pre>
-          <p className="mt-2 text-center text-[11px] text-amber-100/40">
+          <p className="mt-2 text-center text-[11px] text-[#6B5B4A] dark:text-amber-100/40">
             يُبنى النصّ آلياً من جلسة هذا اليوم — عدّل الدرجات من «تعديل» ثم أعِد الفتح لتحديثه.
           </p>
         </div>
@@ -299,7 +299,7 @@ export default function DailyReportModal({
         )}
 
         {/* الأزرار */}
-        <div className="shrink-0 border-t border-amber-500/15 px-5 py-3">
+        <div className="shrink-0 border-t border-amber-900/10 px-5 py-3 dark:border-amber-500/15">
           <div className="flex gap-2">
             <button
               type="button"
@@ -319,7 +319,7 @@ export default function DailyReportModal({
               واتساب
             </button>
           </div>
-          <p className="mt-2 flex items-center justify-center gap-1.5 text-[11px] font-bold text-amber-100/45">
+          <p className="mt-2 flex items-center justify-center gap-1.5 text-[11px] font-bold text-[#6B5B4A] dark:text-amber-100/45">
             <CheckCheck className="h-3.5 w-3.5" />
             انسخ والصق في واتساب أو الرسائل مباشرةً
           </p>
