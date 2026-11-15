@@ -65,34 +65,34 @@ export default function ArchivedStudentsModal({
         role="dialog"
         aria-modal="true"
         aria-label="أرشيف الطلاب"
-        className="animate-slide-up relative max-h-[85dvh] w-full max-w-lg overflow-y-auto rounded-t-3xl border-t border-amber-500/20 bg-[#241A14]/95 p-6 pb-8 shadow-2xl backdrop-blur-2xl sm:rounded-3xl sm:border sm:border-amber-500/15"
+        className="animate-slide-up relative max-h-[85dvh] w-full max-w-lg overflow-y-auto rounded-t-3xl border-t border-amber-900/10 bg-amber-50/95 p-6 pb-8 shadow-2xl backdrop-blur-2xl sm:rounded-3xl sm:border dark:border-white/10 dark:bg-[#241A14]/95"
       >
         <div className="mb-4 flex items-center justify-between gap-2">
-          <h2 className="flex items-center gap-2 text-xl font-extrabold text-[#F5EBE1]">
+          <h2 className="flex items-center gap-2 text-xl font-extrabold text-[#2D1F17] dark:text-[#F5EBE1]">
             <Archive className="h-5 w-5 text-[#B8860B]" />
             الأرشيف
           </h2>
           <button
             onClick={onClose}
             aria-label="إغلاق"
-            className="flex h-8 w-8 items-center justify-center rounded-full bg-amber-100/10 text-amber-100/70 hover:bg-amber-100/20"
+            className="flex h-8 w-8 items-center justify-center rounded-full bg-black/[0.05] text-[#6B5B4A] hover:bg-black/10 dark:bg-white/10 dark:text-amber-100/70 dark:hover:bg-white/20"
           >
             <X className="h-4 w-4" />
           </button>
         </div>
 
         {students.length === 0 ? (
-          <p className="py-8 text-center text-sm font-semibold text-amber-100/60">
+          <p className="py-8 text-center text-sm font-semibold text-[#6B5B4A] dark:text-amber-100/60">
             لا يوجد طلاب مؤرشَفون.
           </p>
         ) : (
           <ul className="space-y-3">
             {students.map((s) => (
-              <li key={s.id} data-archived-student={s.id} className="rounded-2xl bg-white/5 p-3">
+              <li key={s.id} data-archived-student={s.id} className="rounded-2xl bg-black/[0.04] p-3 dark:bg-white/5">
                 <div className="flex items-center justify-between gap-2">
                   <div className="min-w-0">
-                    <p className="truncate text-base font-extrabold text-[#F5EBE1]">{s.name}</p>
-                    <p className="text-[11px] font-semibold text-amber-100/50">
+                    <p className="truncate text-base font-extrabold text-[#2D1F17] dark:text-[#F5EBE1]">{s.name}</p>
+                    <p className="text-[11px] font-semibold text-[#8a7261] dark:text-amber-100/50">
                       {s.level ? `${s.level} · ` : ''}أُرشف {dateOf(s.archivedAt)}
                     </p>
                   </div>
@@ -111,7 +111,7 @@ export default function ArchivedStudentsModal({
                       onClick={() => setConfirmId(confirmId === s.id ? null : (s.id ?? null))}
                       disabled={busyId !== null}
                       aria-label={`حذف ${s.name} نهائياً`}
-                      className="press flex items-center gap-1 rounded-full bg-rose-500/15 px-3 py-1.5 text-xs font-bold text-rose-300 hover:bg-rose-500/25 disabled:opacity-50"
+                      className="press flex items-center gap-1 rounded-full bg-rose-500/15 px-3 py-1.5 text-xs font-bold text-rose-800 dark:text-rose-300 hover:bg-rose-500/25 disabled:opacity-50"
                     >
                       <Trash2 className="h-3.5 w-3.5" />
                       حذف
@@ -121,14 +121,14 @@ export default function ArchivedStudentsModal({
 
                 {confirmId === s.id ? (
                   <div className="mt-3 rounded-xl border border-rose-500/30 bg-rose-500/10 p-3">
-                    <p className="text-xs leading-relaxed text-rose-200/80">
+                    <p className="text-xs leading-relaxed text-rose-800/80 dark:text-rose-200/80">
                       سيُحذف «{s.name}» وكل جلساته وحضوره نهائياً، ولا يمكن التراجع.
                     </p>
                     <div className="mt-2 flex gap-2">
                       <button
                         type="button"
                         onClick={() => setConfirmId(null)}
-                        className="press flex-1 rounded-full bg-amber-100/10 py-1.5 text-xs font-bold text-amber-100/80"
+                        className="press flex-1 rounded-full bg-black/[0.05] py-1.5 text-xs font-bold text-[#5A4636] dark:bg-amber-100/10 dark:text-amber-100/80"
                       >
                         إلغاء
                       </button>
