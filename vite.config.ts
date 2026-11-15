@@ -17,7 +17,7 @@ export default defineConfig({
     /**
      * PWA: **العمل بلا شبكة + تحديثٌ تلقائيّ**.
      * • العمل بلا شبكة: يُخزَّن هيكل التطبيق (HTML/JS/CSS) مع **بيانات المصحف
-     *   (١٫٥ ميغا)** و**الخطوط (العربية والثمانية)** و**الأيقونات** في مخزن
+     *   (١٫٥ ميغا)** و**الخطوط (ثمانية وCairo وAmiri Quran، كلها مستضافة محليّاً)** و**الأيقونات** في مخزن
      *   العمل (precache) لحظة التثبيت ⇒ يفتح التطبيق كاملاً بلا إنترنت.
      * • التحديث التلقائيّ: `autoUpdate` ⇒ عند نشر نسخةٍ جديدة يلتقطها العامل
      *   الخادميّ في الخلفيّة ويُفعّلها فوراً (skipWaiting + clientsClaim) بلا أن
@@ -37,27 +37,6 @@ export default defineConfig({
         cleanupOutdatedCaches: true,
         clientsClaim: true,
         skipWaiting: true,
-        runtimeCaching: [
-          {
-            // خطوط جوجل (Cairo + Amiri Quran) — بلا شبكة بعد أول تحميل
-            urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
-            handler: 'StaleWhileRevalidate',
-            options: {
-              cacheName: 'google-fonts-css',
-              expiration: { maxEntries: 8, maxAgeSeconds: 60 * 60 * 24 * 365 },
-              cacheableResponse: { statuses: [0, 200] },
-            },
-          },
-          {
-            urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/i,
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'google-fonts-webfonts',
-              expiration: { maxEntries: 24, maxAgeSeconds: 60 * 60 * 24 * 365 },
-              cacheableResponse: { statuses: [0, 200] },
-            },
-          },
-        ],
       },
       devOptions: {
         // العامل الخادميّ الحقيقيّ يُبنى في `npm run build` ويُجرَّب بـ`preview`.
