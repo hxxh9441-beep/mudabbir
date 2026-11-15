@@ -146,9 +146,45 @@ export async function createStudent(
     ringId,
     status: 'not_prepared',
     lastUpdated: new Date(),
+    activeSince: isoDay(),
     ...patch,
   } as never);
   return db.student.get(id as number);
+}
+
+// ---- الأرشفة ----------------------------------------------------------------
+
+/** هل الطالب مؤرشَف؟ */
+export const isArchived = (s: Pick<Student, 'archivedAt'>): boolean => !!s.archivedAt;
+
+/** طلاب الحلقة مقسَّمين: نشطون / مؤرشَفون (بقراءةٍ واحدة). */
+export async function studentsOfRing(
+  ringId: number,
+): Promise<{ active: Student[]; archived: Student[] }> {
+  const rows = await db.student.where('ringId').equals(ringId).toArray();
+  return {
+    active: rows.filter((s) => !isArchived(s)),
+    archived: rows.filter(isArchived),
+  };
+}
+
+/** أرشفة طالب: يبقى كل شيءٍ محفوظاً، ويختفي من اللوحة وقواعد نهاية اليوم. */
+export async function archiveStudent(id: number | undefined, when = new Date()): Promise<void> {
+  if (id === undefined) return;
+  await db.student.update(id, { archivedAt: when, lastUpdated: new Date() });
+}
+
+/**
+ * استعادة طالبٍ مؤرشَف. تُضبط `activeSince` على اليوم كي لا تُثبَّت له غياباتٌ
+ * عن أيام الأرشفة (قواعد نهاية اليوم تنظر ٢١ يوماً إلى الوراء).
+ */
+export async function restoreStudent(id: number | undefined): Promise<void> {
+  if (id === undefined) return;
+  await db.student.update(id, {
+    archivedAt: undefined,
+    activeSince: isoDay(),
+    lastUpdated: new Date(),
+  });
 }
 
 // Remove a student AND every recitation session recorded for them, atomically.
@@ -633,9 +669,11 @@ export async function finalizePastDays(
   daysBack = 21,
 ): Promise<number> {
   if (ring.id === undefined) return 0;
-  const students = await db.student.where('ringId').equals(ring.id).toArray();
+  const { active: students } = await studentsOfRing(ring.id);
   const ids = students.map((s) => s.id).filter((x): x is number => x !== undefined);
   if (!ids.length) return 0;
+  const sinceOf = new Map<number, string>();
+  for (const s of students) if (s.id !== undefined && s.activeSince) sinceOf.set(s.id, s.activeSince);
 
   // أيام العمل الماضية فقط — الإجازة خارج الحساب
   const days: string[] = [];
@@ -662,6 +700,8 @@ export async function finalizePastDays(
   let fixed = 0;
   for (const date of days) {
     for (const sid of ids) {
+      const since = sinceOf.get(sid);
+      if (since && date < since) continue; // لم يكن في الحلقة بعد (إنشاء/استعادة)
       const key = `${sid}|${date}`;
       if (sesSet.has(key)) continue; // سُجّل له تسميعٌ ⇒ لا حكم
       const status = attMap.get(key);

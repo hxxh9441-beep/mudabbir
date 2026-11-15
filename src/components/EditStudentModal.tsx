@@ -4,8 +4,9 @@
 // المشترك، فهو نفس النموذج المستخدم في «إضافة طالب جديد» حرفياً.
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Pencil, Trash2 } from 'lucide-react';
-import { deleteStudentWithRecords } from '../db';
+import { Archive, Pencil, Trash2 } from 'lucide-react';
+import { archiveStudent, deleteStudentWithRecords, restoreStudent } from '../db';
+import { notify } from '../utils/toast';
 import type { Student } from '../db/schema';
 import StudentForm from './StudentForm';
 
@@ -15,17 +16,47 @@ export default function EditStudentModal({
   onClose,
   onSaved,
   onDeleted,
+  onArchived,
 }: {
   isOpen: boolean;
   student: Student | null;
   onClose: () => void;
   onSaved?: () => void;
   onDeleted?: () => void;
+  /** بعد الأرشفة أو التراجع عنها — لإعادة قراءة قائمة الحلقة */
+  onArchived?: () => void;
 }) {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
   if (!isOpen || !student) return null;
+
+  const handleArchive = async () => {
+    if (deleting) return;
+    const id = student.id;
+    const name = student.name;
+    setDeleting(true);
+    try {
+      await archiveStudent(id);
+      onArchived?.();
+      onClose();
+      notify(`أُرشف «${name}» — سجلاته محفوظة.`, 'success', {
+        ms: 8000,
+        action: {
+          label: 'تراجع',
+          run: () => {
+            void restoreStudent(id)
+              .then(() => onArchived?.())
+              .catch(() => notify('تعذّر التراجع عن الأرشفة.', 'error'));
+          },
+        },
+      });
+    } catch {
+      notify('تعذّرت الأرشفة. حاول مرة أخرى.', 'error');
+    } finally {
+      setDeleting(false);
+    }
+  };
 
   const handleDelete = async () => {
     if (deleting) return;
@@ -75,24 +106,40 @@ export default function EditStudentModal({
           onSaved={() => onSaved?.()}
         />
 
-        {/* ---- danger zone: the only door to deletion ---- */}
-        <div className="mt-6 border-t border-rose-500/20 pt-4">
+        {/* ---- إزالة الطالب: خياران — أرشفة (قابلة للتراجع) أو حذفٌ نهائيّ ---- */}
+        <div className="mt-6 border-t border-black/10 pt-4 dark:border-amber-500/20">
+          <p className="mb-3 text-xs font-bold text-[#6B5B4A] dark:text-amber-100/60">إزالة الطالب من الحلقة</p>
+
+          <button
+            type="button"
+            onClick={() => void handleArchive()}
+            disabled={deleting}
+            className="press flex w-full items-center justify-center gap-2 rounded-xl border border-amber-500/30 bg-amber-500/10 py-3 text-sm font-bold text-amber-900 transition hover:bg-amber-500/20 disabled:opacity-50 dark:text-amber-200"
+          >
+            <Archive className="h-4 w-4" />
+            أرشفة الطالب
+          </button>
+          <p className="mt-1.5 text-[11px] leading-relaxed text-[#8a7261] dark:text-amber-100/50">
+            يختفي من الحلقة وتبقى جلساته وحضوره محفوظة، ويمكن استعادته من «الأرشيف» متى شئت.
+          </p>
+
           {!confirmDelete ? (
             <button
               type="button"
               onClick={() => setConfirmDelete(true)}
-              className="press flex w-full items-center justify-center gap-2 rounded-xl border border-rose-500/30 bg-rose-500/10 py-3 text-sm font-bold text-rose-800 transition hover:bg-rose-500/20 dark:text-rose-300"
+              className="press mt-4 flex w-full items-center justify-center gap-2 rounded-xl border border-rose-500/30 bg-rose-500/10 py-3 text-sm font-bold text-rose-800 transition hover:bg-rose-500/20 dark:text-rose-300"
             >
               <Trash2 className="h-4 w-4" />
-              حذف الطالب
+              حذف نهائي
             </button>
           ) : (
-            <div className="rounded-xl border border-rose-500/30 bg-rose-500/10 p-3">
+            <div className="mt-4 rounded-xl border border-rose-500/30 bg-rose-500/10 p-3">
               <p className="mb-3 text-sm font-bold text-rose-800 dark:text-rose-200">
-                هل أنت متأكد من حذف الطالب وسجلاته؟
+                هل أنت متأكد من الحذف النهائي؟
               </p>
               <p className="mb-3 text-xs leading-relaxed text-rose-800/70 dark:text-rose-200/70">
-                سيُحذف «{student.name}» وكل جلسات التسميع المسجّلة له نهائياً. لا يمكن التراجع.
+                سيُحذف «{student.name}» وكل جلسات التسميع وسجلّ الحضور المسجّلة له نهائياً.
+                لا يمكن التراجع — وإن أردت الاحتفاظ بسجلاته فاختر «أرشفة الطالب».
               </p>
               <div className="flex gap-2">
                 <button

@@ -14,7 +14,7 @@ export default function ToastHost() {
   if (!items.length) return null;
   return (
     <div
-      className="pointer-events-none fixed inset-x-0 bottom-4 z-[200] flex flex-col items-center gap-2 px-4"
+      className="pointer-events-none fixed inset-x-0 top-3 z-[200] flex flex-col items-center gap-2 px-4"
       role="status"
       aria-live="polite"
     >

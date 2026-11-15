@@ -118,7 +118,7 @@ export default function HomeView() {
           ? 'لم تأخذ نسخةً احتياطيّة بعد — بياناتك على هذا الجهاز وحده.'
           : `مرّ ${days} يوماً على آخر نسخةٍ احتياطيّة.`,
         'info',
-        { ms: 0, action: { label: 'نسخ الآن', run: () => setBackupOpen(true) } },
+        { ms: 12000, action: { label: 'نسخ الآن', run: () => setBackupOpen(true) } },
       );
     }
   }, [hasData]);

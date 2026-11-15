@@ -4,13 +4,13 @@
 // - Student list scrolls naturally without ever clipping the header.
 import type { Ring } from '../db/schema';
 import { useEffect, useState } from 'react';
-import { Plus, ArrowRight, UserPlus } from 'lucide-react';
+import { Plus, ArrowRight, UserPlus, Archive } from 'lucide-react';
 import StudentCard from './StudentCard';
 import AddStudentModal from './AddStudentModal';
 import EditStudentModal from './EditStudentModal';
+import ArchivedStudentsModal from './ArchivedStudentsModal';
 import DateBar from './DateBar';
 import {
-  db,
   markNotMemorizedAll,
   clearNotMemorizedAll,
   finalizePastDays,
@@ -20,6 +20,7 @@ import {
   getDaySessions,
   setAttendance,
   isoDay,
+  studentsOfRing,
   tickPauseCountdowns,
 } from '../db';
 import type { Student, StudentStatus, Session } from '../db/schema';
@@ -37,6 +38,9 @@ export default function CircleDashboard({
   initialRecitationStudentId?: number | null;
 }) {
   const [students, setStudents] = useState<Student[]>([]);
+  // المؤرشَفون: خارج اللوحة وعدّاداتها، ويُعرضون في نافذة «الأرشيف»
+  const [archived, setArchived] = useState<Student[]>([]);
+  const [archiveOpen, setArchiveOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [autoOpenDone, setAutoOpenDone] = useState(false);
@@ -62,13 +66,14 @@ export default function CircleDashboard({
     let cancelled = false;
     (async () => {
       try {
-        let rows = await db.student.where('ringId').equals(ring.id).toArray();
+        let { active: rows, archived: arch } = await studentsOfRing(ring.id);
         // ⏸ إيقاف الحفظ: ينقص العدّاد يوماً لكل «يوم حلقة» — مرة عند فتح اللوحة
-        const ticked = await tickPauseCountdowns(rows as Student[], ring.activeDays);
-        if (ticked > 0) {
-          rows = (await db.student.where('ringId').equals(ring.id).toArray()) as Student[];
+        const ticked = await tickPauseCountdowns(rows, ring.activeDays);
+        if (ticked > 0) ({ active: rows, archived: arch } = await studentsOfRing(ring.id));
+        if (!cancelled) {
+          setStudents(rows);
+          setArchived(arch);
         }
-        if (!cancelled) setStudents(rows);
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -99,8 +104,9 @@ export default function CircleDashboard({
   };
 
   const refreshStudents = async () => {
-    const rows = await db.student.where('ringId').equals(ring.id).toArray();
-    setStudents(rows);
+    const { active, archived: arch } = await studentsOfRing(ring.id);
+    setStudents(active);
+    setArchived(arch);
     setLoading(false);
   };
 
@@ -226,7 +232,17 @@ export default function CircleDashboard({
             </p>
           </div>
 
-          {/* Left: Add student */}
+          {/* Left: Archive (إن وُجد مؤرشَفون) + Add student */}
+          {archived.length > 0 ? (
+            <button
+              onClick={() => setArchiveOpen(true)}
+              aria-label={`الأرشيف (${archived.length})`}
+              className="press flex shrink-0 items-center gap-1 rounded-full bg-black/5 px-3 py-2 text-sm font-bold text-[#5A4636] hover:bg-black/10 dark:bg-amber-100/10 dark:text-amber-100 dark:hover:bg-amber-100/20"
+            >
+              <Archive className="h-4 w-4" />
+              {archived.length}
+            </button>
+          ) : null}
           <button
             onClick={() => setIsAddModalOpen(true)}
             className="press flex shrink-0 items-center gap-1.5 rounded-full bg-[#B8860B] px-3.5 py-2 text-sm font-extrabold text-white shadow-lg shadow-amber-700/40 hover:brightness-110"
@@ -332,6 +348,14 @@ export default function CircleDashboard({
         onClose={() => setEditingStudent(null)}
         onSaved={refreshStudents}
         onDeleted={() => removeStudentLocally(editingStudent?.id)}
+        onArchived={() => void refreshStudents()}
+      />
+
+      <ArchivedStudentsModal
+        isOpen={archiveOpen}
+        students={archived}
+        onClose={() => setArchiveOpen(false)}
+        onChanged={() => void refreshStudents()}
       />
     </div>
   );
