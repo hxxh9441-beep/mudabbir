@@ -37,6 +37,7 @@ import {
 import type { DayMark } from '../utils/dailyPlan';
 import { isZeroScore, scoreColor, scoreText } from '../utils/scoreColor';
 import { navigate, planHash } from '../utils/nav';
+import { notify } from '../utils/toast';
 
 type Mode = 'hifz' | 'murajaah';
 
@@ -328,7 +329,7 @@ export default function RecitationSheet({
 
   // Screen Wake Lock while the recitation is open
   useEffect(() => {
-    let wakeLock: any = null;
+    let wakeLock: WakeLockSentinel | null = null;
     if ('wakeLock' in navigator && isOpen) {
       (async () => {
         try {
@@ -429,6 +430,8 @@ export default function RecitationSheet({
     const actualFrom: Position = dailyPlan?.from ?? { surah: actualTo.surah, ayah: startVerse };
     if (studentId !== undefined) {
       try {
+        // كل الكتابات في معاملة واحدة: إمّا تُحفظ الجلسة والموضع معاً أو لا شيء
+        await db.transaction('rw', db.session, db.student, async () => {
         await saveRecitationPart(studentId, day, mode, {
           amount,
           score,
@@ -481,10 +484,14 @@ export default function RecitationSheet({
             );
           }
         }
+        });
         await refreshDaySession();
         setJustSaved({ mode, updated: wasRecorded });
       } catch (e) {
         console.error('فشل حفظ الجلسة', e);
+        notify('تعذّر حفظ التسميع — لم يُسجَّل شيء. حاول مرة أخرى.', 'error', {
+          action: { label: 'إعادة المحاولة', run: () => void approvePart() },
+        });
       }
     }
   };
@@ -525,6 +532,9 @@ export default function RecitationSheet({
         setJustSaved({ mode, updated: false });
       } catch (e) {
         console.error('فشل تسجيل «لم يحفظ»', e);
+        notify('تعذّر تسجيل «لم يحفظ». حاول مرة أخرى.', 'error', {
+          action: { label: 'إعادة المحاولة', run: () => void abortAsNotMemorized() },
+        });
       }
     }
   };

@@ -2,6 +2,7 @@
 // Full-page Circle Details screen (NOT a floating modal).
 // - Sticky navigation bar keeps the circle header always visible.
 // - Student list scrolls naturally without ever clipping the header.
+import type { Ring } from '../db/schema';
 import { useEffect, useState } from 'react';
 import { Plus, ArrowRight, UserPlus } from 'lucide-react';
 import StudentCard from './StudentCard';
@@ -31,7 +32,7 @@ export default function CircleDashboard({
   onClose,
   initialRecitationStudentId,
 }: {
-  ring: any;
+  ring: Ring & { id: number };
   onClose: () => void;
   initialRecitationStudentId?: number | null;
 }) {

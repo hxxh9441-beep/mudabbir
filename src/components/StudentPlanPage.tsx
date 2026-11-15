@@ -165,7 +165,7 @@ export default function StudentPlanPage({ studentId, onBack }: Props) {
         today,
       });
     } catch (e) {
-      console.error('[مُدِّر] تعذّر بناء مصدَّر الشهر:', e);
+      console.error('[مُدَبِّر] تعذّر بناء مصدَّر الشهر:', e);
       return null;
     }
   }, [data, exportMonth, today]);

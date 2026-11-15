@@ -113,7 +113,7 @@ export function projectRange(opts: {
   const weekEnd = opts.to;
 
   const byDate = new Map<string, Session>();
-  for (const s of sessions) byDate.set(isoD(new Date(s.date)), s);
+  for (const s of sessions) byDate.set(s.day ?? isoD(new Date(s.date)), s);
 
   const hifzDir = student.hifzDirection ?? 'nas-to-baqarah';
   const murajaahDir = student.murajaahDirection ?? 'nas-to-baqarah';

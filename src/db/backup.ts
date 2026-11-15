@@ -8,13 +8,15 @@
 // • قبل الاستعادة نقرأ رأس الملفّ (بلا استيراد) لنعرض للمعلّم ما فيه بالضبط
 //   ويؤكّد — فلا تُفقد بياناتٌ بضغطةٍ عابرة.
 import { exportDB, importInto } from 'dexie-export-import';
-import { db } from './index';
+import { backfillSessionDays, db } from './index';
 
 export interface BackupSummary {
   /** الإصدار بصيغة dexie */
   formatVersion: number;
   /** أسماء قاعدة البيانات كما كُتبت في الملفّ */
   databaseName: string;
+  /** إصدار مخطّط قاعدة البيانات داخل الملفّ (Dexie version) */
+  databaseVersion: number | null;
   /** عدد الصفوف في كل جدول: { ring: 2, student: 5, … } */
   tables: Record<string, number>;
   /** مجموع الصفوف */
@@ -23,9 +25,49 @@ export interface BackupSummary {
   exportedAt: string | null;
 }
 
+const LAST_BACKUP_KEY = 'mudabbir:lastBackupAt';
+/** بعد كم يوماً نُذكّر المعلّم بأخذ نسخة */
+export const BACKUP_REMINDER_DAYS = 7;
+
 /** الملفّ الاحتياطيّ كاملاً — Blob جاهز للتنزيل. */
 export async function exportBackup(): Promise<Blob> {
   return exportDB(db, { prettyJson: false });
+}
+
+/** تُستدعى بعد تنزيل نسخةٍ فعلاً (لا عند مجرّد التصدير). */
+export function markBackupDone(when = new Date()): void {
+  try {
+    localStorage.setItem(LAST_BACKUP_KEY, when.toISOString());
+  } catch {
+    /* التخزين غير متاح — التذكير فقط يتأثّر */
+  }
+}
+
+/** عدد الأيام منذ آخر نسخة، أو null إن لم تُؤخذ نسخةٌ قطّ. */
+export function daysSinceBackup(now = new Date()): number | null {
+  try {
+    const raw = localStorage.getItem(LAST_BACKUP_KEY);
+    if (!raw) return null;
+    const t = Date.parse(raw);
+    if (Number.isNaN(t)) return null;
+    return Math.floor((now.getTime() - t) / 86400000);
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * يطلب من المتصفّح ألّا يمسح بيانات التطبيق عند ضيق المساحة (IndexedDB
+ * «best-effort» افتراضياً). لا يضرّ إن رُفض الطلب أو لم يُدعَم.
+ */
+export async function requestPersistentStorage(): Promise<boolean> {
+  try {
+    if (!navigator.storage?.persist) return false;
+    if (await navigator.storage.persisted?.()) return true;
+    return await navigator.storage.persist();
+  } catch {
+    return false;
+  }
 }
 
 /** اسم الملفّ المقترح: «مدبّر-نسخة-2026-09-12.json» */
@@ -78,6 +120,7 @@ export async function readBackup(file: Blob, fileLastModified?: number): Promise
     exportDate?: string;
     data?: {
       databaseName?: string;
+      databaseVersion?: number;
       exportDate?: string;
       tables?: { name: string; rowCount?: number }[];
     };
@@ -90,6 +133,12 @@ export async function readBackup(file: Blob, fileLastModified?: number): Promise
   if (parsed.formatName !== 'dexie' || !parsed.data?.tables) {
     throw new Error('الملفّ ليس نسخةً احتياطيّة من مُدَبِّر.');
   }
+  const fileVersion = parsed.data.databaseVersion ?? null;
+  if (fileVersion !== null && fileVersion > db.verno) {
+    throw new Error(
+      'هذه النسخة أُخذت من إصدارٍ أحدث من التطبيق — حدّث التطبيق أولاً ثم أعد المحاولة.',
+    );
+  }
   const tables: Record<string, number> = {};
   let total = 0;
   for (const t of parsed.data.tables) {
@@ -100,6 +149,7 @@ export async function readBackup(file: Blob, fileLastModified?: number): Promise
   return {
     formatVersion: parsed.formatVersion ?? 1,
     databaseName: parsed.data.databaseName ?? '—',
+    databaseVersion: fileVersion,
     tables,
     total,
     exportedAt:
@@ -110,10 +160,30 @@ export async function readBackup(file: Blob, fileLastModified?: number): Promise
 }
 
 /**
- * **الاستعادة الفعليّة**: تُفرَّغ الجداول الحاليّة ثم يُستورد محتوى الملفّ.
- * `clearTablesBeforeImport` يجعلها استعادةً كاملةً لا دمجاً — فيعود الجهاز إلى
- * حالته لحظة أخذ النسخة بالضبط.
+ * **الاستعادة الفعليّة** — آمنة: قبل أيّ مسحٍ نُصدِّر الحالة الحاليّة في الذاكرة،
+ * فإن فشل الاستيراد (ملفٌّ تالف/قيدٌ مخالف) أُعيدت البيانات كما كانت بدل أن
+ * يبقى الجهاز فارغاً. `clearTablesBeforeImport` يجعلها استعادةً كاملةً لا دمجاً.
+ *
+ * @returns نسخةُ ما قبل الاستعادة (لتنزيلها كشبكة أمانٍ إضافيّة إن شاء المستدعي)
  */
-export async function restoreBackup(file: Blob): Promise<void> {
-  await importInto(db, file, { clearTablesBeforeImport: true });
+export async function restoreBackup(file: Blob): Promise<{ snapshot: Blob }> {
+  const snapshot = await exportDB(db, { prettyJson: false });
+  try {
+    await importInto(db, file, { clearTablesBeforeImport: true });
+    // نسخٌ أُخذت قبل الإصدار ٥ لا تحمل `day` — نملؤه كي تجدها الفهارس
+    await backfillSessionDays();
+  } catch (e) {
+    try {
+      await importInto(db, snapshot, { clearTablesBeforeImport: true });
+    } catch (rollbackError) {
+      throw new Error(
+        `فشلت الاستعادة وتعذّر التراجع التلقائي أيضاً (${String(rollbackError)}). ` +
+          'لا تُغلق الصفحة قبل تنزيل نسخةٍ احتياطيّة.',
+      );
+    }
+    throw new Error(
+      `${e instanceof Error ? e.message : String(e)} — أُعيدت بياناتك كما كانت قبل المحاولة.`,
+    );
+  }
+  return { snapshot };
 }

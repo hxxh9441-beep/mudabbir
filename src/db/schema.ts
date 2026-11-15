@@ -80,6 +80,12 @@ export interface Session {
   id?: number;
   studentId: number;
   date: Date;
+  /**
+   * اليوم المحلّي (yyyy-mm-dd) — مفتاحُ البحث. يُشتقّ من `date` عند الكتابة
+   * وتُملأ به الصفوف القديمة في الترقية ٥ وبعد الاستعادة. اختياريٌّ في النوع
+   * لأنّ صفوف النسخ القديمة قد تخلو منه لحظةً قبل `backfillSessionDays()`.
+   */
+  day?: string;
   hifzLines: number;
   murajaahPages: number;
   score: number; // 0-20
@@ -136,4 +142,11 @@ export const tablesV3: Record<string, string> = { ...tablesV2 };
 export const tablesV4: Record<string, string> = {
   ...tablesV2,
   attendance: '++id, studentId, date, &[studentId+date]',
+};
+
+// الإصدار ٥: فهرسان على الجلسات — `day` و`[studentId+day]` — بدل قراءة كل جلسات
+// الطالب وتصفيتها بـnew Date() في كل استعلام (كان يبطؤ مع تراكم السنين).
+export const tablesV5: Record<string, string> = {
+  ...tablesV4,
+  sessions: '++id, studentId, date, hifzLines, murajaahPages, score, createdAt, day, [studentId+day]',
 };

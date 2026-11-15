@@ -36,6 +36,7 @@ import {
 import type { MushafData, MushafPage, MushafAyah } from '../data/mushafData';
 import { sessionGet, sessionSet, sessionRemove } from '../utils/session';
 import { dayStatuses, nextPositionAfter } from '../utils/dailyPlan';
+import { notify } from '../utils/toast';
 
 type WordState = Record<string, number>; // `${s}:${n}:${i}` -> 0|1|2
 
@@ -838,6 +839,7 @@ export default function MushafView({ ringId: _ringId, studentId, onBack, onAppro
     const score = Math.max(0, 20 - red);
     const day = isoDay();
     try {
+      await db.transaction('rw', db.session, db.student, async () => {
       // صفٌّ واحد لليوم: نُحدّث المادة الحالية فيه فقط (فتُبنى عليها حالة
       // «اكتمل الجزءان» في ورقة التسميع وعلى البطاقة).
       const already = dayStatuses(await getDaySession(studentId, day))[assignment.mode] !== 'none';
@@ -859,8 +861,13 @@ export default function MushafView({ ringId: _ringId, studentId, onBack, onAppro
           );
         }
       }
+      });
     } catch (e) {
       console.error('فشل حفظ الجلسة', e);
+      notify('تعذّر حفظ التسميع — لم يُسجَّل شيء. حاول مرة أخرى.', 'error', {
+        action: { label: 'إعادة المحاولة', run: () => void approve() },
+      });
+      return; // لا نمسح حالة العمل ولا نُغلق: وإلا بدا الفشل نجاحاً وضاع التظليل
     }
     sessionRemove(storageKey);
     sessionRemove(`recite:${studentId}`);

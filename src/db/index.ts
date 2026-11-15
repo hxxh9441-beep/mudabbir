@@ -8,7 +8,7 @@ import type {
   DailyResult,
   Attendance,
 } from './schema';
-import { tables, tablesV2, tablesV3, tablesV4 } from './schema';
+import { tables, tablesV2, tablesV3, tablesV4, tablesV5 } from './schema';
 import { isWorkDay } from '../utils/ringDays';
 
 /** تاريخ محلي بصيغة yyyy-mm-dd — مفتاح كل ما هو «يومي» في التطبيق */
@@ -69,6 +69,14 @@ export class QuranCircleDB extends Dexie {
         } catch (e) {
           console.warn('تعذّر التنظيف في الترقية ٤', e);
         }
+      });
+    // الإصدار ٥: حقل `day` + فهارس الجلسات (يُملأ للصفوف القديمة).
+    this.version(5)
+      .stores(tablesV5)
+      .upgrade(async (tx) => {
+        await tx.table('sessions').toCollection().modify((r: Session) => {
+          if (!r.day) r.day = isoDay(new Date(r.date));
+        });
       });
     // Explicit binding: map the class properties to the declared table names.
     // (Avoids relying on decorators / matching, guaranteeing db.ring is defined.)
@@ -280,8 +288,19 @@ export async function getDaySession(
   studentId: number,
   date: string = todayKey(),
 ): Promise<Session | null> {
-  const rows = await db.session.where('studentId').equals(studentId).toArray();
-  return rows.find((r) => isoDay(new Date(r.date)) === date) ?? null;
+  return (await db.session.where('[studentId+day]').equals([studentId, date]).first()) ?? null;
+}
+
+/** يملأ `day` للصفوف التي تخلو منه (نسخٌ قديمة مُستعادة). يُرجع عدد ما أُصلح. */
+export async function backfillSessionDays(): Promise<number> {
+  let n = 0;
+  await db.session.toCollection().modify((r: Session) => {
+    if (!r.day) {
+      r.day = isoDay(new Date(r.date));
+      n++;
+    }
+  });
+  return n;
 }
 
 export const getTodaySession = (studentId: number): Promise<Session | null> =>
@@ -301,6 +320,7 @@ async function upsertDaySession(
   await db.session.add({
     studentId,
     date: new Date(`${date}T12:00:00`),
+    day: date,
     hifzLines: 0,
     murajaahPages: 0,
     score: 0,
@@ -465,10 +485,9 @@ export async function getDaySessions(
 ): Promise<Record<number, Session>> {
   const out: Record<number, Session> = {};
   if (!studentIds.length) return out;
-  const rows = await db.session.where('studentId').anyOf(studentIds).toArray();
-  for (const r of rows) {
-    if (isoDay(new Date(r.date)) === date) out[r.studentId] = r;
-  }
+  const ids = new Set(studentIds);
+  const rows = await db.session.where('day').equals(date).and((r) => ids.has(r.studentId)).toArray();
+  for (const r of rows) out[r.studentId] = r;
   return out;
 }
 
@@ -479,9 +498,10 @@ export async function getDayResults(
 ): Promise<Record<number, DailyResult>> {
   const out: Record<number, DailyResult> = {};
   if (!studentIds.length) return out;
-  const rows = await db.session.where('studentId').anyOf(studentIds).toArray();
+  const ids = new Set(studentIds);
+  const rows = await db.session.where('day').equals(date).and((r) => ids.has(r.studentId)).toArray();
   for (const r of rows) {
-    if (r.result && isoDay(new Date(r.date)) === date) out[r.studentId] = r.result;
+    if (r.result) out[r.studentId] = r.result;
   }
   return out;
 }
@@ -637,7 +657,7 @@ export async function finalizePastDays(
   const attMap = new Map<string, StudentStatus>();
   for (const r of attRows) attMap.set(`${r.studentId}|${r.date}`, r.status);
   const sesSet = new Set<string>();
-  for (const r of sesRows) sesSet.add(`${r.studentId}|${isoDay(new Date(r.date))}`);
+  for (const r of sesRows) sesSet.add(`${r.studentId}|${r.day ?? isoDay(new Date(r.date))}`);
 
   let fixed = 0;
   for (const date of days) {

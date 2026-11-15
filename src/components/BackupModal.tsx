@@ -11,6 +11,7 @@ import {
   currentCounts,
   downloadBlob,
   exportBackup,
+  markBackupDone,
   readBackup,
   restoreBackup,
   type BackupSummary,
@@ -56,6 +57,7 @@ export default function BackupModal({ isOpen, onClose }: { isOpen: boolean; onCl
     try {
       const blob = await exportBackup();
       downloadBlob(blob, backupFileName());
+      markBackupDone();
       setDone(`تم تنزيل النسخة (${Math.max(1, Math.round(blob.size / 1024))} كيلوبايت) ✓`);
     } catch (e) {
       setError('تعذّر إنشاء النسخة الاحتياطية: ' + String(e));
@@ -82,7 +84,9 @@ export default function BackupModal({ isOpen, onClose }: { isOpen: boolean; onCl
     setBusy(true);
     setError(null);
     try {
-      await restoreBackup(pending.file);
+      const { snapshot } = await restoreBackup(pending.file);
+      // شبكة أمانٍ إضافيّة: ملفٌّ بحالة الجهاز قبل الاستعادة
+      downloadBlob(snapshot, backupFileName().replace('نسخة', 'قبل-الاستعادة'));
       setDone('تمت الاستعادة ✓ — سيُحدَّث التطبيق الآن…');
       setPending(null);
       window.setTimeout(() => window.location.reload(), 900);

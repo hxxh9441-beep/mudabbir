@@ -4,6 +4,8 @@ import { BookOpen, ChevronLeft, Plus } from 'lucide-react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { DatabaseBackup } from 'lucide-react';
 import BackupModal from './BackupModal';
+import { BACKUP_REMINDER_DAYS, daysSinceBackup, requestPersistentStorage } from '../db/backup';
+import { notify } from '../utils/toast';
 import AppBackground from './AppBackground';
 import ErrorBoundary from './ErrorBoundary';
 import ThemeToggle from './ThemeToggle';
@@ -103,6 +105,23 @@ export default function HomeView() {
     },
     [],
   );
+
+  // حماية البيانات: تخزينٌ دائم + تذكيرٌ بالنسخ الاحتياطيّ (مرّةً عند الفتح)
+  const hasData = rings ? rings.length > 0 : null;
+  useEffect(() => {
+    if (!hasData) return;
+    void requestPersistentStorage();
+    const days = daysSinceBackup();
+    if (days === null || days >= BACKUP_REMINDER_DAYS) {
+      notify(
+        days === null
+          ? 'لم تأخذ نسخةً احتياطيّة بعد — بياناتك على هذا الجهاز وحده.'
+          : `مرّ ${days} يوماً على آخر نسخةٍ احتياطيّة.`,
+        'info',
+        { ms: 0, action: { label: 'نسخ الآن', run: () => setBackupOpen(true) } },
+      );
+    }
+  }, [hasData]);
 
   // Re-apply the route whenever the rings list loads/changes.
   useEffect(() => {
@@ -260,10 +279,10 @@ export default function HomeView() {
           }}
         />
       )}
-      {selectedRing && (
+      {selectedRing?.id !== undefined && (
         <ErrorBoundary label="صفحة الحلقة" onBack={() => { navigate(homeHash()); setSelectedRing(null); }}>
         <CircleDashboard
-          ring={selectedRing}
+          ring={{ ...selectedRing, id: selectedRing.id }}
           initialRecitationStudentId={recitationStudentId}
           onClose={() => {
             navigate(homeHash());
